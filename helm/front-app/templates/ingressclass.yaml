@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: {{ .Values.ingressClass.name }}
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "{{ .Values.ingressClass.isDefaultClass }}"
+  labels:
+    app: {{ include "front-app.name" . }}
+    chart: {{ include "front-app.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  controller: {{ .Values.ingressClass.controller }}
+  parameters:
+    scope: {{ .Values.ingressClass.parameters.scope }}
+    namespace: {{ .Values.ingressClass.parameters.namespace }}
+    apiGroup: {{ .Values.ingressClass.parameters.apiGroup }}
+    kind: {{ .Values.ingressClass.parameters.kind }}
+    name: {{ .Values.ingressClass.parameters.name }}

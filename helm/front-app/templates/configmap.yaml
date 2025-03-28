@@ -1,0 +1,16 @@
+{{- if .Values.config -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "front-app.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "front-app.name" . }}
+    chart: {{ include "front-app.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  {{- range $key, $val := .Values.config }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+{{- end }}

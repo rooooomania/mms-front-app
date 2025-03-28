@@ -1,0 +1,134 @@
+# Default values for front-app.
+replicaCount: 1
+
+image:
+  repository: nrt.ocir.io/nrzhjkbijcw5/my_docker_repository/front-app
+  tag: 0.1.0-${BUILDRUN_HASH}
+  pullPolicy: IfNotPresent
+
+args: []
+
+service:
+  type: ClusterIP
+  ports:
+    http:
+      port: 80
+      targetPort: 80
+      nodePort: null
+    https:
+      port: 443
+      targetPort: 443
+      nodePort: null
+
+volumeMounts:
+  enabled: false
+  mountPath: /usr/share/nginx/html
+
+volumes:
+  enabled: false
+  persistentVolumeClaim: front-app-pvc
+
+# ConfigMap の設定
+config:
+  NGINX_HOST: "localhost"
+  NGINX_PORT: "80"
+
+# Secret の設定
+secret: {}
+
+isDockerRegistryPrivate: true
+imagePullSecrets: "docker-registry"
+# dockerConfigJson: ${DOCKER_CONFIG_JSON}
+
+# IngressClassParameters の設定
+ingressClassParameters:
+  name: native-ingress-class-params
+  namespace: native-ingress-controller-system
+  compartmentId: "ocid1.compartment.oc1..aaaaaaaacprdqdyf4x2rrhpbbhqicpsyytza37dart2o56hodmxnkpcfztna"
+  subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaaj4hggbiri3r4xntov6dms4ap3prgqyehvoygoqmst3zfnmfroatq"
+  loadBalancerName: "native-ic-lb"
+  isPrivate: false
+  maxBandwidthMbps: 400
+  minBandwidthMbps: 100
+
+# IngressClass の設定
+ingressClass:
+  name: native-ic-ingress-class
+  isDefaultClass: "true"
+  controller: "oci.oraclecloud.com/native-ingress-controller"
+  parameters:
+    scope: Namespace
+    namespace: native-ingress-controller-system
+    apiGroup: ingress.oraclecloud.com
+    kind: ingressclassparameters
+    name: native-ingress-class-params
+
+# Ingress の設定
+ingress:
+  enabled: true
+  name: front-app-ingress
+  annotations: {}
+  ingressClassName: native-ic-ingress-class
+  tls:
+    enabled: false
+    host: front-app.local
+    secretName: front-app-tls
+  defaultBackend:
+    serviceName: front-app
+    servicePort: 80
+  rules:
+    host: front-app.local
+    path: /
+    pathType: Prefix
+    backend:
+      serviceName: front-app
+      servicePort: 80
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
