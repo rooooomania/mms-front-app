@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
-replicaCount: 1
+replicaCount: 3
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
@@ -38,16 +38,15 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: {} # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+# capabilities:
+#   drop:
+#   - ALL
+# readOnlyRootFilesystem: true
+# runAsNonRoot: true
+# runAsUser: 1000
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
@@ -85,7 +84,7 @@ ingress:
       serviceName: front-app
       servicePort: 80
 
-resources: {}
+resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -126,7 +125,7 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
+  # Additional volumes on the output Deployment definition.
 volumes:
   enabled: false
   persistentVolumeClaim: front-app-pvc
@@ -164,8 +163,23 @@ ingressClassParameters:
   name: native-ingress-class-params
   namespace: native-ingress-controller-system
   compartmentId: "ocid1.compartment.oc1..aaaaaaaacprdqdyf4x2rrhpbbhqicpsyytza37dart2o56hodmxnkpcfztna"
-  subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaaj4hggbiri3r4xntov6dms4ap3prgqyehvoygoqmst3zfnmfroatq"
+  subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaatflilzz3qvz6geef2dfhlfafvz5viipn7ecznvqc5w324xnpfwbq"
+  # 静的なロードバランサー名（動的命名を使用しない場合）
   loadBalancerName: "native-ic-lb"
+  # 動的なロードバランサー名の設定
+  dynamicLoadBalancerName:
+    # 動的命名を有効にするかどうか
+    enabled: true
+    # 接頭辞（例: "prod", "dev", "staging"など）
+    prefix: "dev"
+    # 接尾辞（例: "v1", "east", "west"など）
+    suffix: "tokyo"
+    # リリース名を含めるかどうか
+    includeReleaseName: true
+    # 名前空間を含めるかどうか
+    includeNamespace: false
+    # 区切り文字
+    separator: "-"
   isPrivate: false
   maxBandwidthMbps: 400
   minBandwidthMbps: 100
