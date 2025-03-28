@@ -28,19 +28,19 @@ volumes:
   enabled: false
   persistentVolumeClaim: front-app-pvc
 
-# ConfigMap の設定
+# ConfigMap settings
 config:
   NGINX_HOST: "localhost"
   NGINX_PORT: "80"
 
-# Secret の設定
+# Secret settings
 secret: {}
 
 isDockerRegistryPrivate: true
 imagePullSecrets: "docker-registry"
 # dockerConfigJson: ${DOCKER_CONFIG_JSON}
 
-# IngressClassParameters の設定
+# IngressClassParameters settings
 ingressClassParameters:
   name: native-ingress-class-params
   namespace: native-ingress-controller-system
@@ -51,7 +51,7 @@ ingressClassParameters:
   maxBandwidthMbps: 400
   minBandwidthMbps: 100
 
-# IngressClass の設定
+# IngressClass settings
 ingressClass:
   name: native-ic-ingress-class
   isDefaultClass: "true"
@@ -63,7 +63,7 @@ ingressClass:
     kind: ingressclassparameters
     name: native-ingress-class-params
 
-# Ingress の設定
+# Ingress settings
 ingress:
   enabled: true
   name: front-app-ingress

@@ -148,43 +148,43 @@ tolerations: []
 
 affinity: {}
 
-# ConfigMap の設定
+# ConfigMap settings
 config:
   NGINX_HOST: "localhost"
   NGINX_PORT: "80"
 
-# Secret の設定
+# Secret settings
 secret: {}
 
 isDockerRegistryPrivate: false
 
-# IngressClassParameters の設定
+# IngressClassParameters settings
 ingressClassParameters:
   name: native-ingress-class-params
   namespace: native-ingress-controller-system
   compartmentId: "ocid1.compartment.oc1..aaaaaaaacprdqdyf4x2rrhpbbhqicpsyytza37dart2o56hodmxnkpcfztna"
   subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaatflilzz3qvz6geef2dfhlfafvz5viipn7ecznvqc5w324xnpfwbq"
-  # 静的なロードバランサー名（動的命名を使用しない場合）
+  # Static load balancer name (when not using dynamic naming)
   loadBalancerName: "native-ic-lb"
-  # 動的なロードバランサー名の設定
+  # Dynamic load balancer name settings
   dynamicLoadBalancerName:
-    # 動的命名を有効にするかどうか
+    # Whether to enable dynamic naming
     enabled: true
-    # 接頭辞（例: "prod", "dev", "staging"など）
+    # Prefix (e.g., "prod", "dev", "staging", etc.)
     prefix: "dev"
-    # 接尾辞（例: "v1", "east", "west"など）
+    # Suffix (e.g., "v1", "east", "west", etc.)
     suffix: "tokyo"
-    # リリース名を含めるかどうか
+    # Whether to include release name
     includeReleaseName: true
-    # 名前空間を含めるかどうか
+    # Whether to include namespace
     includeNamespace: false
-    # 区切り文字
+    # Separator
     separator: "-"
   isPrivate: false
   maxBandwidthMbps: 400
   minBandwidthMbps: 100
 
-# IngressClass の設定
+# IngressClass settings
 ingressClass:
   name: native-ic-ingress-class
   isDefaultClass: "true"
