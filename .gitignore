@@ -1,0 +1,35 @@
+# Helm chart packages
+*.tgz
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Helm chart dependencies
+**/charts/*.tgz
+
+# Build artifacts
+dist/
+build/
+
+# Environment variables
+.env
+*.env
+.env.*

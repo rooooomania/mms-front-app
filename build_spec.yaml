@@ -1,0 +1,168 @@
+version: 0.1
+component: build
+timeoutInSeconds: 6000
+shell: bash
+env:
+  # these are local variables to the build config
+  variables:
+    key: "value"
+    DOCKER_CONFIG_SECRET: "docker-registry" # Added configurable secret name
+    NAMESPACE: "default"
+    CLUSTER_ID: "ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaca6l2kjow3zd7yxxpbp56cgqoixfaih76hflpincdcezfpwt6p5q"
+    REGION: "ap-tokyo-1"
+  # the value of a vaultVariable is the secret-id (in OCI ID format) stored in the OCI Vault service
+  # you can then access the value of that secret in your build_spec.yaml commands
+  vaultVariables:
+    HELM_REPO_USER: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaacoteugaabb6fxfgyspprlfajj5oicddiedesnufhloef4ok6ef5q"
+    USER_AUTH_TOKEN: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaacoteugaaekws77mmximd323qrtvy7rgwzstyqqnevfkd5dbym2ma"
+    DOCKER_CONFIG_JSON: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaacoteugaahjjqezjcfnyilec3w62dut77aow4s2weggbironejypq"
+
+  # exportedVariables are made available to use as parameters in sucessor Build Pipeline stages
+  # For this Build to run, the Build Pipeline needs to have a BUILDRUN_HASH parameter set
+  exportedVariables:
+  - BUILDRUN_HASH
+  - HELM_VERSION
+
+steps:
+- type: Command
+  name: "Export variables"
+  timeoutInSeconds: 40
+  command: |
+    # export BUILDRUN_HASH=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+    # echo "BUILDRUN_HASH: " $BUILDRUN_HASH
+    export BUILDRUN_HASH=$(git rev-parse --short HEAD)
+    echo "BUILDRUN_HASH: " $BUILDRUN_HASH
+    echo "APP_IMAGE_NAME: " $APP_IMAGE_NAME
+
+  onFailure:
+  - type: Command
+    command: |
+      echo "Handling Failure"
+      echo "Failure successfully handled"
+    timeoutInSeconds: 400
+    runAs: root
+
+- type: Command
+  timeoutin seconds: 1200
+  name: "Confirm the secrets are available"
+  command: |
+    # Enable strict error handling
+    set -euo pipefail
+
+    echo "Confirming the secrets are available"
+
+    # Install kubectl only if it's not already installed
+    if ! command -v kubectl &> /dev/null; then
+      echo "kubectl not found. Installing kubectl..."
+      # Download and make kubectl executable
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      chmod +x kubectl
+
+      # If running as root, sudo is not required; otherwise, use sudo
+      if [ "$(id -u)" -eq 0 ]; then
+        mv kubectl /usr/local/bin/
+      else
+        sudo mv kubectl /usr/local/bin/
+      fi
+
+      kubectl version --client
+    else
+      echo "kubectl is already installed."
+    fi
+
+    # Ensure the kubeconfig directory exists
+    mkdir -p "$HOME/.kube"
+
+    # Get the kubeconfig file and manage the secret if CLUSTER_ID is set
+    if [ -n "${CLUSTER_ID:-}" ]; then
+      echo "Creating kubeconfig for cluster ${CLUSTER_ID}..."
+      oci ce cluster create-kubeconfig \
+        --cluster-id "${CLUSTER_ID}" \
+        --file "$HOME/.kube/config" \
+        --region "${REGION}" \
+        --token-version 2.0.0
+
+      # Restrict permissions on the kubeconfig file
+      chmod 600 $HOME/.kube/config
+
+      # Check if the secret already exists in the specified namespace
+      if ! kubectl get secret "${DOCKER_CONFIG_SECRET}" --namespace="${NAMESPACE}" &> /dev/null; then
+        echo "Secret ${DOCKER_CONFIG_SECRET} not found. Creating the secret..."
+        kubectl create secret generic "${DOCKER_CONFIG_SECRET}" \
+          --type=kubernetes.io/dockerconfigjson \
+          --from-literal=.dockerconfigjson="${DOCKER_CONFIG_JSON}" \
+          --namespace="${NAMESPACE}"
+
+        # Provide feedback based on the success of secret creation
+        if [ $? -eq 0 ]; then
+          echo "Secret object created successfully"
+        else
+          echo "Failed to create secret object"
+          exit 1
+        fi
+      else
+        echo "Secret '${DOCKER_CONFIG_SECRET}' already exists in namespace ${NAMESPACE}"
+      fi
+    else
+      echo "CLUSTER_ID is not set. Skipping kubeconfig creation and secret verification."
+    fi
+- type: Command
+  timeout in seconds: 1200
+  name: "Helm Build"
+  command: |
+    cd helm/${APP_IMAGE_NAME}
+
+    # Update Chart.yaml
+    originalChartfile="Chart.yaml"
+    templateChartfile="Chart.yaml.template"
+    tmpChartfile=$(mktemp)
+    cp --attributes-only --preserve $originalChartfile $tmpChartfile
+    cat $templateChartfile | envsubst > $tmpChartfile && mv $tmpChartfile $originalChartfile
+
+    # Update values.yaml
+    originalValuesFile="values.yaml"
+    templateValuefile="values.yaml.template"
+    tmpValuesfile=$(mktemp)
+    cp --attributes-only --preserve $originalValuesFile $tmpValuesfile
+    cat $templateValuefile | envsubst > $tmpValuesfile && mv $tmpValuesfile $originalValuesFile
+    helm package .
+
+    # Retrieve version from <app_name>-<version>.tgz
+    echo "Listing files"
+    echo $(ls -1)
+    FILENAME=$(ls -1 | grep -E "${APP_IMAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+-[0-9a-z]+\.tgz")
+    echo "FILENAME=${FILENAME}"
+    VERSION=${FILENAME#*-}
+    VERSION=${VERSION%.tgz}
+    echo "Version: $VERSION"
+
+    # Set HELM_VERSION to the version of the Helm chart
+    export HELM_VERSION=$VERSION
+
+    helm registry login ${HELM_REPO} -u ${HELM_REPO_USER} -p ${USER_AUTH_TOKEN}
+    helm push *.tgz ${HELM_REPO_URL}
+
+- type: Command
+  timeoutInSeconds: 1200
+  name: "Build container image"
+  command: |
+    pwd
+    ls -lrt
+    echo ${OCI_WORKSPACE_DIR}
+    docker build -t ${APP_IMAGE_NAME}:latest -f Dockerfile .
+    # docker images
+  onFailure:
+  - type: Command
+    command: |
+      echo "Handling Failure"
+      echo "Failure successfully handled"
+    timeoutInSeconds: 40
+    runAs: root
+
+outputArtifacts:
+- name: docker-image
+  type: DOCKER_IMAGE
+  # this location tag doesn't effect the tag used to deliver the container image
+  # to the Container Registry
+  # However, the part of the image name effect the image name in the Container Registry
+  location: ${APP_IMAGE_NAME}:latest
