@@ -132,8 +132,7 @@ steps:
     echo $(ls -1)
     FILENAME=$(ls -1 | grep -E "${APP_IMAGE_NAME}-[0-9]+\.[0-9]+\.[0-9]+-[0-9a-z]+\.tgz")
     echo "FILENAME=${FILENAME}"
-    VERSION=${FILENAME#*-}
-    VERSION=${VERSION%.tgz}
+    VERSION=${FILENAME%.tgz}
     echo "Version: $VERSION"
 
     # Set HELM_VERSION to the version of the Helm chart
