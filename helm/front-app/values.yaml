@@ -169,7 +169,7 @@ ingressClassParameters:
   # Dynamic load balancer name settings
   dynamicLoadBalancerName:
     # Whether to enable dynamic naming
-    enabled: true
+    enabled: false
     # Prefix (e.g., "prod", "dev", "staging", etc.)
     prefix: "dev"
     # Suffix (e.g., "v1", "east", "west", etc.)

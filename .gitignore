@@ -33,3 +33,5 @@ build/
 .env
 *.env
 .env.*
+
+CLAUDE.md
