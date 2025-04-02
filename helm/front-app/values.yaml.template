@@ -45,7 +45,7 @@ ingressClassParameters:
   name: native-ingress-class-params
   namespace: native-ingress-controller-system
   compartmentId: "ocid1.compartment.oc1..aaaaaaaacprdqdyf4x2rrhpbbhqicpsyytza37dart2o56hodmxnkpcfztna"
-  subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaaj4hggbiri3r4xntov6dms4ap3prgqyehvoygoqmst3zfnmfroatq"
+  subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaakpe2sabdhoejxr6raf2bsqidjwlzw2hgmtncle3xjuvdn7ohcxya"
   loadBalancerName: "native-ic-lb"
   isPrivate: false
   maxBandwidthMbps: 400
