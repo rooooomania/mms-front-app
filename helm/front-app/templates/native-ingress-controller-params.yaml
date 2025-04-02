@@ -11,7 +11,7 @@ metadata:
 spec:
   compartmentId: "{{ .Values.ingressClassParameters.compartmentId }}"
   subnetId: "{{ .Values.ingressClassParameters.subnetId }}"
-  {{- if .Values.ingressClassParameters.dynamicLoadBalancerName.enabled }}
+  {{- if and .Values.ingressClassParameters.dynamicLoadBalancerName (eq .Values.ingressClassParameters.dynamicLoadBalancerName.enabled true) }}
   loadBalancerName: "{{ if .Values.ingressClassParameters.dynamicLoadBalancerName.prefix }}{{ .Values.ingressClassParameters.dynamicLoadBalancerName.prefix }}{{ .Values.ingressClassParameters.dynamicLoadBalancerName.separator }}{{ end }}{{ if .Values.ingressClassParameters.dynamicLoadBalancerName.includeNamespace }}{{ .Release.Namespace }}{{ .Values.ingressClassParameters.dynamicLoadBalancerName.separator }}{{ end }}{{ if .Values.ingressClassParameters.dynamicLoadBalancerName.includeReleaseName }}{{ .Release.Name }}{{ .Values.ingressClassParameters.dynamicLoadBalancerName.separator }}{{ end }}lb{{ if .Values.ingressClassParameters.dynamicLoadBalancerName.suffix }}{{ .Values.ingressClassParameters.dynamicLoadBalancerName.separator }}{{ .Values.ingressClassParameters.dynamicLoadBalancerName.suffix }}{{ end }}"
   {{- else }}
   loadBalancerName: "{{ .Values.ingressClassParameters.loadBalancerName }}"
