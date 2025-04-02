@@ -8,7 +8,7 @@ env:
     key: "value"
     DOCKER_CONFIG_SECRET: "docker-registry" # Added configurable secret name
     NAMESPACE: "default"
-    CLUSTER_ID: "ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaca6l2kjow3zd7yxxpbp56cgqoixfaih76hflpincdcezfpwt6p5q"
+    CLUSTER_ID: "ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaa7f6agzw7tcvklrp3jjba5slmlhcwqcfzuy3hzthync2ce24c3hsa"
     REGION: "ap-tokyo-1"
   # the value of a vaultVariable is the secret-id (in OCI ID format) stored in the OCI Vault service
   # you can then access the value of that secret in your build_spec.yaml commands
