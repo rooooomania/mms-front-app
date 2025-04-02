@@ -163,7 +163,7 @@ ingressClassParameters:
   name: native-ingress-class-params
   namespace: native-ingress-controller-system
   compartmentId: "ocid1.compartment.oc1..aaaaaaaacprdqdyf4x2rrhpbbhqicpsyytza37dart2o56hodmxnkpcfztna"
-  subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaatflilzz3qvz6geef2dfhlfafvz5viipn7ecznvqc5w324xnpfwbq"
+  subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaakpe2sabdhoejxr6raf2bsqidjwlzw2hgmtncle3xjuvdn7ohcxya"
   # Static load balancer name (when not using dynamic naming)
   loadBalancerName: "native-ic-lb"
   # Dynamic load balancer name settings
