@@ -8,14 +8,14 @@ env:
     key: "value"
     DOCKER_CONFIG_SECRET: "docker-registry" # Added configurable secret name
     NAMESPACE: "default"
-    CLUSTER_ID: "ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaev4iqld5hs7g2jbwikt6bds3jywz57b3u4abgsouicd76as7u47a"
+    CLUSTER_ID: "ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaasbotdey5c4jlhzd75dalqycleosweyljqe3xvbpf3cseqsa4h2dq"
     REGION: "ap-tokyo-1"
   # the value of a vaultVariable is the secret-id (in OCI ID format) stored in the OCI Vault service
   # you can then access the value of that secret in your build_spec.yaml commands
   vaultVariables:
-    HELM_REPO_USER: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaacoteugaabb6fxfgyspprlfajj5oicddiedesnufhloef4ok6ef5q"
-    USER_AUTH_TOKEN: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaacoteugaaekws77mmximd323qrtvy7rgwzstyqqnevfkd5dbym2ma"
-    DOCKER_CONFIG_JSON: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaacoteugaahjjqezjcfnyilec3w62dut77aow4s2weggbironejypq"
+    HELM_REPO_USER: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaauadaqaqamho4ljnw5zqh54tdy4uoj4qieli5pwm6st34gx54gc3a"
+    USER_AUTH_TOKEN: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaauadaqaqa4ixzyfn2xh6g33pbpl7cu3sgue2l4riuecmcyu6hti7q"
+    DOCKER_CONFIG_JSON: "ocid1.vaultsecret.oc1.ap-tokyo-1.amaaaaaauadaqaqaopdkp6c45e5echm2mrc3n67xrluhby7dem2efub6g7ya"
 
   # exportedVariables are made available to use as parameters in sucessor Build Pipeline stages
   # For this Build to run, the Build Pipeline needs to have a BUILDRUN_HASH parameter set
