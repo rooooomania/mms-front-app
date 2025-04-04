@@ -9,7 +9,7 @@ This project manages the deployment and configuration of the frontend applicatio
 - Configure and integrate with OCI's native ingress controller
 - Support CI/CD pipelines for automated build and deployment
 
-## Architecture
+## **Architecture**
 The application is containerized using Docker and deployed to Kubernetes clusters on OCI. It utilizes:
 - Helm charts for Kubernetes resource management
 - OCI's native ingress controller for traffic management
