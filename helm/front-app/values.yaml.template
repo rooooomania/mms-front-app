@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  repository: nrt.ocir.io/nrzhjkbijcw5/my_docker_repository/front-app
+  repository: nrt.ocir.io/nrqsaxf33gdb/my_docker_repository/front-app
   tag: 0.1.0-${BUILDRUN_HASH}
   pullPolicy: IfNotPresent
 
