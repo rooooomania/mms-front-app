@@ -44,7 +44,7 @@ imagePullSecrets: "docker-registry"
 ingressClassParameters:
   name: native-ingress-class-params
   namespace: native-ingress-controller-system
-  compartmentId: "ocid1.compartment.oc1..aaaaaaaacprdqdyf4x2rrhpbbhqicpsyytza37dart2o56hodmxnkpcfztna"
+  compartmentId: "ocid1.compartment.oc1..aaaaaaaad4llvyxil2ozjwgflu7ydtz2rdeuknkazoomxbxvg3kwpzoj6yrq"
   subnetId: "ocid1.subnet.oc1.ap-tokyo-1.aaaaaaaah6s4qrt44ioivh2bc3ymenl5nqprwqmongzitjdd2xlqmxr7fiwq"
   # Static load balancer name (when not using dynamic naming)
   loadBalancerName: "native-ic-lb"
